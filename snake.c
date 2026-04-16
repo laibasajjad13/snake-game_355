@@ -1,6 +1,16 @@
 #include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <ncurses.h>
+#include <unistd.h> 
 
-#define MAX_SNAKE 100
+
+// Jason
+// Global variables for game features
+// MAX_SNAKE set to 300 to support half-perimeter win condition
+ 
+#define MAX_SNAKE 300
+int pending_growth = 0; 
 
 // directions for the snake basic movement.
 // moving up down left and right.
@@ -50,7 +60,7 @@ void init_snake(Snake *s, int x, int y)
 //void move_snake: vvvvv
 // moves the snake forward incrementing by 1 step, back of snake body copies the one in front.
 //then, the head moves forward based on the current direction.
-   
+    
 void move_snake(Snake *s)
 {
     // important! make the tail follow body. tail behind body front
@@ -96,4 +106,82 @@ int self_collision(Snake *s)
         }
     }
     return 0; // snake is safe!
+}
+
+// Jason 
+// Uses the structure to group trophy data
+struct Trophy {
+    Point pos;      
+    int value;      
+    time_t spawn_time; 
+    int expiry;     
+    int active;     
+} current_trophy;
+
+//Jason
+//Drawing the visible border required
+
+void draw_border(int max_y, int max_x) {
+    for (int i = 0; i < max_x; i++) {
+        mvaddch(0, i, '#');             
+        mvaddch(max_y - 1, i, '#');     
+    }
+    for (int i = 0; i < max_y; i++) {
+        mvaddch(i, 0, '#');             
+        mvaddch(i, max_x - 1, '#');     
+    }
+}
+
+int main() {
+    int max_x, max_y;
+    Snake mySnake; 
+
+    // Start ncurses
+    initscr(); 
+    noecho();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE); 
+    
+    // FORCE the terminal to report the actual maximized size
+    endwin();       
+    refresh();      
+    initscr();      
+    
+    getmaxyx(stdscr, max_y, max_x); 
+    init_snake(&mySnake, max_x / 2, max_y / 2);
+
+    while (1) {
+        erase(); 
+        
+        // This function now uses the full max_y and max_x captured above
+        draw_border(max_y, max_x); 
+
+        for (int i = 0; i < mySnake.length; i++) {
+            mvaddch(mySnake.body[i].y, mySnake.body[i].x, '*');
+        }
+
+        int ch = getch();
+        if (ch == KEY_UP) change_direction(&mySnake, UP);
+        else if (ch == KEY_DOWN) change_direction(&mySnake, DOWN);
+        else if (ch == KEY_LEFT) change_direction(&mySnake, LEFT);
+        else if (ch == KEY_RIGHT) change_direction(&mySnake, RIGHT);
+        else if (ch == 'q') break; 
+
+        move_snake(&mySnake); 
+
+        // Death logic
+        if (mySnake.body[0].x <= 0 || mySnake.body[0].x >= max_x - 1 ||
+            mySnake.body[0].y <= 0 || mySnake.body[0].y >= max_y - 1 || 
+            self_collision(&mySnake)) {
+            break; 
+        }
+
+        refresh();
+        usleep(100000); 
+    }
+
+   endwin(); 
+    printf("Game Over! %d x %d\n", max_x, max_y);
+    return 0;
 }
