@@ -12,7 +12,7 @@
 #define MAX_SNAKE 300
 int pending_growth = 0; 
 
-// directions for the snake basic movement.
+// Laiba. directions for the snake basic movement.
 // moving up down left and right.
 //using enum instead of words for comparing code, easier
 typedef enum {
@@ -22,13 +22,13 @@ typedef enum {
     RIGHT
 } Direction;
 
-// each part of the snake is x y, its a point on the screen.
+// Laiba Sajjad. each part of the snake is x y, its a point on the screen.
 typedef struct {
     int x;
     int y;
 } Point;
 
-// this is the full snake info body- all snake parts
+// Laiba. this is the full snake info body- all snake parts
 // length- how big/long the snake is currenty
 //dir- shows which movement or way snake goes in. left right, etc.
 typedef struct {
@@ -37,7 +37,7 @@ typedef struct {
     Direction dir;
 } Snake;
 
-// void init_snake: vvvvv
+// Laiba. void init_snake: vvvvv
 //creates the snake at the start
 //startX and startY- WHERE the snake starts on the screen
 // Initial length- set as 5. (starting size of our snake)
@@ -57,7 +57,7 @@ void init_snake(Snake *s, int x, int y)
 }
 
 
-//void move_snake: vvvvv
+//Laiba.void move_snake: vvvvv
 // moves the snake forward incrementing by 1 step, back of snake body copies the one in front.
 //then, the head moves forward based on the current direction.
     
@@ -68,7 +68,7 @@ void move_snake(Snake *s)
         s->body[i] = s->body[i - 1];
     }
 
-// important! move the head based on the direction
+// Laiba. important! move the head based on the direction
 // ONLY the head changes the position directly.
     if (s->dir == RIGHT) s->body[0].x++;
     else if (s->dir == LEFT) s->body[0].x--;
@@ -76,7 +76,7 @@ void move_snake(Snake *s)
     else if (s->dir == DOWN) s->body[0].y++;
 }
 
-// change_direction- changes which way snake is going  when USER press arrow keys
+// Laiba. change_direction- changes which way snake is going  when USER press arrow keys
 // user press ARROWKEYS, then snake moves.
 // also blocking snake from crashing into itself.
 void change_direction(Snake *s, Direction newDir)
@@ -94,7 +94,7 @@ void change_direction(Snake *s, Direction newDir)
 }
 
 
-//self_collision- checks if the snake hits ITSELF
+//Laiba. self_collision- checks if the snake hits ITSELF
 // if head is body we check if head matches any other body part
 //if YES, then game is over!!!
 int self_collision(Snake *s)
